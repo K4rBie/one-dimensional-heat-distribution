@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>650</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>580</width>
+    <height>350</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Analiza Termiczna ~ Karol Bieńkowski</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="sizeIncrement">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetNoConstraint</enum>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <item row="0" column="0" colspan="2">
+     <widget class="QLabel" name="AnalizaTerm">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Text">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>85</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="PlaceholderText">
+          <brush brushstyle="NoBrush">
+           <color alpha="128">
+            <red>85</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Text">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>85</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="PlaceholderText">
+          <brush brushstyle="NoBrush">
+           <color alpha="128">
+            <red>85</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Text">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>120</red>
+            <green>120</green>
+            <blue>120</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="PlaceholderText">
+          <brush brushstyle="NoBrush">
+           <color alpha="128">
+            <red>85</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="font">
+       <font>
+        <family>Liberation Sans</family>
+        <pointsize>14</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+        <underline>true</underline>
+       </font>
+      </property>
+      <property name="text">
+       <string>Analiza Termiczna</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QGroupBox" name="Podzial">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>50</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Otoczenie pręta</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0" columnstretch="1,1">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMinAndMaxSize</enum>
+         </property>
+         <property name="horizontalSpacing">
+          <number>8</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>6</number>
+         </property>
+         <item row="5" column="1">
+          <widget class="QPushButton" name="czyscbut">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pozwala na ponowne wprowadzenie otoczenia.&lt;/p&gt;&lt;p&gt;Każda zmiana danych w pierwszej części wymaga ponownego wprowadenia otoczenia.&lt;/p&gt;&lt;p&gt;Tip: jeśli program crashuje, to znaczy, że trzeba częściej używać tego przycisku.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Czyść otoczenie</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QPushButton" name="wprowotbut">
+           <property name="text">
+            <string>Rysuj wykres</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="dodajbut">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Każdą zmianę w tej części danych należy potwierdzić klikając &amp;quot;Dodaj&amp;quot;.&lt;/p&gt;&lt;p&gt;Tip: podanie większej długości odcinka, niż pozostała zostanie zinterpretowane jako wykorzystanie całej nieopisanej jeszcze długości.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Dodaj</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="alfalab">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Współczynnik przejmowania ciepła materiału, z którym styka się pręt na sprecyzowanej powyżej długości [W/(m&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;*K)]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>wsp. przejmowania ciepła</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QProgressBar" name="odcinekbar">
+           <property name="value">
+            <number>0</number>
+           </property>
+           <property name="textVisible">
+            <bool>false</bool>
+           </property>
+           <property name="format">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="lodc">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="singleStep">
+            <double>0.500000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="alfa">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="decimals">
+            <number>8</number>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="lodclab">
+           <property name="toolTip">
+            <string>Długość odcinka pręta, która styka się z materiałem o sprecyzowanym poniżej współczynniku przejmowania ciepła [m].</string>
+           </property>
+           <property name="text">
+            <string>długość odcinka pręta</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QPushButton" name="doplikubut">
+           <property name="toolTip">
+            <string>Zapisz dane do pliku.</string>
+           </property>
+           <property name="text">
+            <string>Zapisz</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="PodstDane">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>100</horstretch>
+        <verstretch>100</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>285</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>300</width>
+        <height>10</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Podstawowe informacje</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QFormLayout" name="Dane">
+         <property name="rowWrapPolicy">
+          <enum>QFormLayout::DontWrapRows</enum>
+         </property>
+         <property name="horizontalSpacing">
+          <number>8</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>6</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="llab">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Całkowita długość pręta, dla którego liczony jest rozkład temperatur [m].</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <property name="whatsThis">
+            <string/>
+           </property>
+           <property name="accessibleName">
+            <string/>
+           </property>
+           <property name="accessibleDescription">
+            <string/>
+           </property>
+           <property name="text">
+            <string>długość pręta</string>
+           </property>
+           <property name="buddy">
+            <cstring></cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="total_length_box">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="mouseTracking">
+            <bool>false</bool>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::WheelFocus</enum>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="wrapping">
+            <bool>false</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="decimals">
+            <number>8</number>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.500000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="nlab">
+           <property name="toolTip">
+            <string>Ilość punktów, w których dokonuje się obliczeń temperatury. Więcej punktów to większa dokładność wyników.</string>
+           </property>
+           <property name="text">
+            <string>ilość punktów obliczeń</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="n">
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="accelerated">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="polelab">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[m&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>pole przekroju pręta</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="pole">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="decimals">
+            <number>8</number>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="klab">
+           <property name="toolTip">
+            <string>Współczynnik przewodzenia ciepła (przewodność cieplna właściwa) materiału, z którego wykonany jest pręt [W/(m*K)]</string>
+           </property>
+           <property name="text">
+            <string>współczynnik przewodzenia</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="k">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="decimals">
+            <number>8</number>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="Totlab">
+           <property name="toolTip">
+            <string>[K]</string>
+           </property>
+           <property name="text">
+            <string>temperatura otoczenia</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QDoubleSpinBox" name="Tot">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="decimals">
+            <number>8</number>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="Tplab">
+           <property name="toolTip">
+            <string>[K]</string>
+           </property>
+           <property name="text">
+            <string>temperatura 1. końca pręta</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QDoubleSpinBox" name="Tp">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="decimals">
+            <number>8</number>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="Tklab">
+           <property name="toolTip">
+            <string>[K]</string>
+           </property>
+           <property name="text">
+            <string>temperatura 2. końca pręta</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QDoubleSpinBox" name="Tk">
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>0</string>
+           </property>
+           <property name="decimals">
+            <number>8</number>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>5</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="8" column="0">
+          <widget class="QPushButton" name="wprowadzbut">
+           <property name="toolTip">
+            <string>Każdą zmianę w tej części danych należy potwierdzić klikając &quot;Wprowadź&quot;.</string>
+           </property>
+           <property name="text">
+            <string>Wprowadź</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QPushButton" name="wczytajbut">
+           <property name="toolTip">
+            <string>Pobierz dane z pliku.</string>
+           </property>
+           <property name="text">
+            <string>Wczytaj</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="2">
+          <widget class="QLabel" name="sprawdzlab">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Należy wypełnić pola wartościami większymi od 0;&lt;/p&gt;&lt;p&gt;Wprowadzenie takich samych wartości temperatur skutkuje błędnym wynikiem.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
