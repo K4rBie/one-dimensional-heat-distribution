@@ -1,15 +1,17 @@
 #ifndef ROD_H
 #define ROD_H
+
 #include <iostream>
 #include <cmath>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
 
 struct Segment{
-    int sim_points; //dlugosc czesci kontaktu z tym samym materialem
-    double heat_transfer_coeff; //wspolczynnik przejmowania
+    int sim_points;
+    double heat_transfer_coeff;
     Segment *next;
 };
 
@@ -30,11 +32,16 @@ public:
     Rod();
     void new_segment(int sim_points, double alpha);
     void clear_segments();
-    void set_all_attributes(RodAttributes new_attributes);
-    RodAttributes get_attributes();
-    int get_alloc_pts();
-    void add_to_alloc_pts(int newly_allocated);
-    Segment* give_head();
+    void set_all_attributes(const RodAttributes& new_attributes);
+    RodAttributes& get_attributes();
+    int& get_alloc_pts(); // I hope I can deprecate that function at some point
+    void add_to_alloc_pts(const int& newly_allocated);
+    Segment* give_head(); // to be deprecated
+    bool attributes_correct();
+    bool has_unalloc_pts();
+    std::vector<double> get_all_seg_lenghts();
+    std::vector<double> get_all_seg_ht_coeffs();
+
 
 private:
     Segment* last_tail;

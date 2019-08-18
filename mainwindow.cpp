@@ -1,13 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "oknowynikow.h"
+#include "graphwindow.h"
 #include "QFileDialog"
 
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    last_segment(nullptr), head(nullptr), tail(nullptr), allocated_points(0), // w przyszłości zbędne
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -22,23 +21,22 @@ MainWindow::~MainWindow()
 void MainWindow::on_wprowadzbut_clicked()
 {
     // kopiuje wartości z boxów do zmiennych
-    // set_all()
-    total_length = ui->total_length_box->value();
-    sim_points_number = ui->n->value();
-    section_area = ui->pole->value();
-    thermal_conduct_coeff = ui->k->value();
-    starting_temperature = ui->Tp->value(); // temperatura początku i końca powinna być liczona jako następna i poprzednia
-    aTk=ui->Tk->value();
-    env_temperature=ui->Tot->value();
+    rod.set_all_attributes(RodAttributes{
+                               ui->total_length_box->value(),
+                               ui->pole->value(),
+                               ui->k->value(),
+                               ui->Tp->value(),
+                               ui->Tk->value(),
+                               ui->Tot->value(),
+                               ui->n->value(), 0});
 
-    // simple check
-    if(total_length>0 && sim_points_number>0 && section_area>0 && thermal_conduct_coeff>0){
+    if(rod.attributes_correct()){
 
         ui->Podzial->setEnabled(true);
         ui->wprowotbut->setDisabled(true);
         ui->doplikubut->setDisabled(true);
 
-        ui->odcinekbar->setMaximum(sim_points_number);
+        ui->odcinekbar->setMaximum(ui->n->value());
         ui->sprawdzlab->setText("Dane prawidłowe");
     }else{
         ui->sprawdzlab->setText("Dane nieprawidłowe");
@@ -47,34 +45,28 @@ void MainWindow::on_wprowadzbut_clicked()
 
 void MainWindow::on_dodajbut_clicked(){
 
-    if (allocated_points < sim_points_number){
+    if (rod.has_unalloc_pts()){ //Most of this should probably be done inside Rod class
 
         double section_length = ui->lodc->value();
         double heat_transfer_coeff = ui->alfa->value();
-        int section_sim_points = static_cast<int>(round(section_length / total_length * sim_points_number));
+        int section_sim_points = static_cast<int>
+                (round(section_length / rod.get_attributes().total_length * rod.get_attributes().sim_points_number));
 
         // there cannot be more section sim points then overall sim points number
-        if (section_sim_points > sim_points_number - allocated_points) {
-            section_sim_points = sim_points_number - allocated_points;
-        }
+        // but what if we get rid of this check? as long as there are no rounding errors, this shouldn't be required
+//        if (section_sim_points > sim_points_number - allocated_points) {
+//            section_sim_points = sim_points_number - allocated_points;
+//        }
 
-        allocated_points += section_sim_points;
+        //rod.get_attributes().aTk = 12; //would that work??
+        rod.add_to_alloc_pts(section_sim_points);
+        rod.new_segment(section_sim_points, heat_transfer_coeff);
 
-        ui->odcinekbar->setValue(allocated_points);
-
-        // Rod.new_segment (section_sim_points, heat_transfer_coeff)
-        tail = last_segment;
-        last_segment = new Segment;
-        last_segment->sim_points = section_sim_points;
-        last_segment->heat_transfer_coeff = heat_transfer_coeff;
-        last_segment->next=nullptr;
-
-        // to powinna być część konstruktora Roda
-        if(tail == nullptr){ //true if last segment was nullptr at the start of function.
-            head = last_segment; // there's only one element now.
-        } else (tail->next = last_segment);
+        ui->odcinekbar->setValue(rod.get_alloc_pts()); // I want that function to be deprecated
     }
-    if (allocated_points >= sim_points_number){ // to nie może być else bo on musi sprawdzić to po dodaniu punktów do sumy
+
+    // It has to be another check, not *else* statement, bc it's checked **after** first *if* statement
+    if (!rod.has_unalloc_pts()){
         ui->wprowotbut->setEnabled(true);
         ui->doplikubut->setEnabled(true);
     }
@@ -83,30 +75,27 @@ void MainWindow::on_dodajbut_clicked(){
 
 void MainWindow::on_wprowotbut_clicked()
 {
-    double *Tablica;
-    Tablica = new double [sim_points_number];
-    Tablica = obliczenia(total_length, sim_points_number, section_area, thermal_conduct_coeff, starting_temperature, aTk, env_temperature, head);
+    double* Tablica = new double [rod.get_attributes().sim_points_number];
+    Tablica = obliczenia(
+                rod.get_attributes().total_length,
+                rod.get_attributes().sim_points_number,
+                rod.get_attributes().section_area,
+                rod.get_attributes().thermal_conduct_coeff,
+                rod.get_attributes().starting_temperature,
+                rod.get_attributes().aTk,
+                rod.get_attributes().env_temperature,
+                rod.give_head());
 
-    OknoWynikow okno;
+    GraphWindow okno;
     okno.setModal(true);
-    okno.przekaz(Tablica, sim_points_number, total_length);
+    okno.przekaz(Tablica, rod.get_attributes().sim_points_number, rod.get_attributes().total_length);
     okno.exec();
 }
 
+
 void MainWindow::on_czyscbut_clicked()
 {
-    //Rod.clear()
-    Segment* temp;
-    while(head != nullptr){
-        temp = head;
-        head=head->next;
-        delete temp;
-    }
-
-    allocated_points=0;
-    head=nullptr;
-    last_segment=nullptr;
-    tail=nullptr;
+    rod.clear_segments();
 
     ui->wprowotbut->setDisabled(true);
     ui->odcinekbar->setValue(0);
@@ -115,55 +104,40 @@ void MainWindow::on_czyscbut_clicked()
 
 void MainWindow::on_doplikubut_clicked()
 {
-    QString Qnazwa= QFileDialog::getSaveFileName(this,tr("wybierz plik") ,"", tr("Plik tekstowy (*.txt)"));
+    QString q_name = QFileDialog::getSaveFileName(this,tr("wybierz plik") ,"", tr("Plik tekstowy (*.txt)"));
     ofstream o_file;
-    std::string nazwa = Qnazwa.toUtf8().constData();
-    o_file.open(nazwa.c_str());
+    o_file.open(std::string{q_name.toUtf8().constData()}.c_str());
+
     if(o_file.is_open() == true){
 
-        double lp;
-        double segment_sim_points;
-        double alfa;
-
-        o_file<<"Długość pręta = "<<total_length <<endl;
-
-        o_file<<"Ilość punktów obliczeń = "<<sim_points_number<<endl;
-
-        o_file<<"Pole przekroju pręta = "<<section_area<<endl;
-
-        o_file<<"Współczynnik przewodzenia ciepła = "<<thermal_conduct_coeff<<endl;
-
-        o_file<<"Temperatura otoczenia = "<<env_temperature<<endl;
-
-        o_file<<"Temperatura pierwszego końca = "<<starting_temperature<<endl;
-
-        o_file<<"Temperatura drugiego końca = "<<aTk<<endl;
-
+        o_file<<"Długość pręta = " << rod.get_attributes().total_length <<endl;
+        o_file<<"Ilość punktów obliczeń = " << rod.get_attributes().sim_points_number<<endl;
+        o_file<<"Pole przekroju pręta = " << rod.get_attributes().section_area<<endl;
+        o_file<<"Współczynnik przewodzenia ciepła = " << rod.get_attributes().thermal_conduct_coeff<<endl;
+        o_file<<"Temperatura otoczenia = " << rod.get_attributes().env_temperature<<endl;
+        o_file<<"Temperatura pierwszego końca = " << rod.get_attributes().starting_temperature<<endl;
+        o_file<<"Temperatura drugiego końca = " << rod.get_attributes().aTk<<endl;
         o_file<<"podział (długość fragmentu drutu)_(współczynnik przejmowania ciepła) = "<<endl;
 
-        //Rod.give_head()
-        while(head!=nullptr){
+        // those 2 functions can be merged into one with touple or vector of pairs or any other way.
+        vector<double> lengths = rod.get_all_seg_lenghts();
+        vector<double> ht_coeffs = rod.get_all_seg_ht_coeffs();
 
-            segment_sim_points = head->sim_points;
-            lp = segment_sim_points * total_length / sim_points_number;
-            o_file<<lp<<' ';
-
-            alfa=head->heat_transfer_coeff;
-            o_file<<alfa<<' '<<endl;
-
-            head=head->next;
+        for (unsigned long i = 0; i < lengths.size(); ++i) {
+            o_file << lengths.at(i) << ' ';
+            o_file << ht_coeffs.at(i) << ' ';
         }
 
         o_file.close();
     }
 }
 
+
 void MainWindow::on_wczytajbut_clicked()
 {
     QString Qsciezka = QFileDialog::getOpenFileName(this,tr("wybierz plik") ,"", tr("Plik tekstowy (*.txt)"));
     std::string sciezka = Qsciezka.toUtf8().constData();
     if (sciezka == "") return;
-
 
     ifstream plik;
     plik.open(sciezka.c_str());
@@ -172,100 +146,92 @@ void MainWindow::on_wczytajbut_clicked()
         return;
     }
 
-    char pom;
+    double section_length, alfa;
+    int section_sim_points; //ilosc punktow
 
-    double lp, alfa;
-    int g; //ilosc punktow
-    int suma=0;
+    // I probably need to specify default values in order to make it work
+    // That was an earlier idea that attr will be clean. Now I copy everything from rod so nothing is lost
+    // But I wonder whether I am allowed to copy them this way.
+    // If that's OK, I might change all references to rod.getattributes to attr
+    RodAttributes attr = rod.get_attributes();
+
+    attr.allocated_points = 0;
+
+    char temp;
+
+    do{plik >> temp;} while (temp != '=');
+    plik >> attr.total_length;
+
+    do{plik >> temp;} while (temp != '=');
+    plik >> attr.sim_points_number;
+
+    do{plik >> temp;} while (temp != '=');
+    plik >> attr.section_area;
+
+    do{plik >> temp;} while (temp != '=');
+    plik >> attr.thermal_conduct_coeff;
+
+    do{plik >> temp;} while (temp != '=');
+    plik >> attr.env_temperature;
+
+    do{plik >> temp;} while (temp != '=');
+    plik >> attr.starting_temperature;
+
+    do{plik >> temp;} while (temp != '=');
+    plik >> attr.aTk;
+
+    do{plik >> temp;} while (temp != '=');
 
 
-    do{plik>>pom;}while(pom!='=');
-    plik>>total_length;
-
-    do{plik>>pom;}while(pom!='=');
-    plik>>sim_points_number;
-
-    do{plik>>pom;}while(pom!='=');
-    plik>>section_area;
-
-    do{plik>>pom;}while(pom!='=');
-    plik>>thermal_conduct_coeff;
-
-    do{plik>>pom;}while(pom!='=');
-    plik>>env_temperature;
-
-    do{plik>>pom;}while(pom!='=');
-    plik>>starting_temperature;
-
-    do{plik>>pom;}while(pom!='=');
-    plik>>aTk;
-
-    do{plik>>pom;}while(pom!='=');
-
-    Segment *tmp; //Rod.clear()
-    while(head!=nullptr){
-        tmp=head;
-        head=head->next;
-        delete tmp;
-    }
-
-    suma=0;
-    head=nullptr;
-    last_segment=nullptr;
-    tail=nullptr;
+    rod.set_all_attributes(attr);
+    rod.clear_segments();
 
     ui->odcinekbar->setValue(0);
     ui->wprowotbut->setDisabled(true);
 
-    while(suma<sim_points_number && plik.eof()==false){
+    while(rod.has_unalloc_pts() && !plik.eof()){
 
-        plik>>lp;
+        plik>>section_length;
         plik>>alfa;
 
-        g = int(round(lp/total_length*double(sim_points_number)));
-        if(g>sim_points_number-suma) g=sim_points_number-suma;
-        suma+=g;
+        section_sim_points = int(round(section_length / rod.get_attributes().total_length * rod.get_attributes().sim_points_number));
 
-        //Rod.new_segment();
-        tail=last_segment;
-        last_segment=new Segment;
-        last_segment->sim_points=g;
-        last_segment->heat_transfer_coeff=alfa;
-        last_segment->next=nullptr;
+        // Probably useful but for now it's disabled. Maybe the best way is to make sure that allocated points are not bigger than all points just before calculations?
+        //if(section_sim_points>sim_points_number-suma) section_sim_points=sim_points_number-suma;
 
-        if(tail==nullptr){
-            head=last_segment;
-        }else(tail->next=last_segment);
+        rod.add_to_alloc_pts(section_sim_points);
+
+        rod.new_segment(section_sim_points, alfa);
     }
 
-    ui->odcinekbar->setValue(suma);
+    plik.close();
 
-    ui->total_length_box->setValue(total_length);
-    ui->n->setValue(sim_points_number);
-    ui->pole->setValue(section_area);
-    ui->k->setValue(thermal_conduct_coeff);
-    ui->Tp->setValue(starting_temperature);
-    ui->Tk->setValue(aTk);
-    ui->Tot->setValue(env_temperature);
+    ui->odcinekbar->setValue(rod.get_attributes().allocated_points);
 
-    if(total_length>0 && sim_points_number>0 && section_area>0 && thermal_conduct_coeff>0){
+    ui->total_length_box->setValue( rod.get_attributes().total_length);
+    ui->n->setValue(                rod.get_attributes().sim_points_number);
+    ui->pole->setValue(             rod.get_attributes().section_area);
+    ui->k->setValue(                rod.get_attributes().thermal_conduct_coeff);
+    ui->Tp->setValue(               rod.get_attributes().starting_temperature);
+    ui->Tk->setValue(               rod.get_attributes().aTk);
+    ui->Tot->setValue(              rod.get_attributes().env_temperature);
+
+    if(rod.attributes_correct()){
 
         ui->Podzial->setEnabled(true);
         ui->wprowotbut->setDisabled(true);
         ui->doplikubut->setDisabled(true);
 
-        ui->odcinekbar->setMaximum(sim_points_number);
+        ui->odcinekbar->setMaximum(rod.get_attributes().sim_points_number);
         ui->sprawdzlab->setText("Dane prawidłowe");
     }else{
         ui->sprawdzlab->setText("Dane nieprawidłowe");
     }
 
-    if(suma>=sim_points_number){
+    if(!rod.has_unalloc_pts()){
         ui->wprowotbut->setEnabled(true);
         ui->doplikubut->setEnabled(true);
     }
-
-    plik.close();
 }
 
 

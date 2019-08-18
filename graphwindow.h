@@ -1,21 +1,21 @@
-#ifndef OKNOWYNIKOW_H
-#define OKNOWYNIKOW_H
+#ifndef GRAPHWINDOW_H
+#define GRAPHWINDOW_H
 
 #include <QDialog>
 #include <QPainter>
 
 
 namespace Ui {
-class OknoWynikow;
+class GraphWindow;
 }
 
-class OknoWynikow : public QDialog
+class GraphWindow : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit OknoWynikow(QWidget *parent = nullptr);
-    ~OknoWynikow();
+    explicit GraphWindow(QWidget *parent = nullptr);
+    ~GraphWindow();
 
     void paintEvent(QPaintEvent*);
     void przekaz(double *Tablica, int n, double l);
@@ -30,7 +30,7 @@ private slots:
 
 
 private:
-    Ui::OknoWynikow *ui;
+    Ui::GraphWindow *ui;
 
 };
 

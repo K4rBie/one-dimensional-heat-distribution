@@ -1,22 +1,22 @@
-#include "oknowynikow.h"
-#include "ui_oknowynikow.h"
+#include "graphwindow.h"
+#include "ui_graphwindow.h"
 #include "mainwindow.h"
 #include "sstream"
 #include "iomanip"
 
-OknoWynikow::OknoWynikow(QWidget *parent) :
+GraphWindow::GraphWindow(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::OknoWynikow)
+    ui(new Ui::GraphWindow)
 {
     ui->setupUi(this);
 }
 
-OknoWynikow::~OknoWynikow()
+GraphWindow::~GraphWindow()
 {
     delete ui;
 }
 
-void OknoWynikow::przekaz(double *Tablica, int n, double l){
+void GraphWindow::przekaz(double *Tablica, int n, double l){
     Wykres = new QPointF [n];
     bn=n;
     bl=l;
@@ -105,7 +105,7 @@ void OknoWynikow::przekaz(double *Tablica, int n, double l){
 }
 
 
-void OknoWynikow::paintEvent(QPaintEvent*)
+void GraphWindow::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
 

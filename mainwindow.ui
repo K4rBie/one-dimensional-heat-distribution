@@ -447,7 +447,7 @@
             <bool>false</bool>
            </property>
            <property name="maximum">
-            <number>1000</number>
+            <number>50000</number>
            </property>
            <property name="singleStep">
             <number>10</number>

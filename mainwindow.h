@@ -18,17 +18,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    Segment *last_segment, *head, *tail; // deklaracja zmiennych wewntąrz listy. przerób w klasę
-    int allocated_points;
-
-    double total_length;
-    int sim_points_number;
-    double section_area;
-    double thermal_conduct_coeff;
-    double starting_temperature;
-    double aTk;
-    double env_temperature;
-
     Rod rod;
 
 private slots:

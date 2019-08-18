@@ -1,5 +1,5 @@
 #include "rod.h"
-#include "oknowynikow.h"
+#include "graphwindow.h"
 
 void zpliku(){
     ifstream plik;
@@ -98,8 +98,9 @@ void dopliku(){
     //zapisuje tablicę do pliku
 }
 
+// Will be changes to take the whole Rod
 double * obliczenia(double l, int n, double A, double k, double Ta, double Tb, double Tot, Segment *pret){
-/**/
+
                     /*ZMIENNE*/
     double dx = (l/n); //długość odcinka
     double wsp2;
@@ -280,22 +281,22 @@ void Rod::clear_segments()
     tail = nullptr; // tbh, I don't know if I really need to do that, but I guess I do
 }
 
-void Rod::set_all_attributes(RodAttributes new_attributes)
+void Rod::set_all_attributes(const RodAttributes &new_attributes)
 {
     attributes = new_attributes; // it's not good, bc user still needs to know how to create RodAttributes
 }
 
-RodAttributes Rod::get_attributes()
+RodAttributes &Rod::get_attributes()
 {
     return attributes;
 }
 
-int Rod::get_alloc_pts()
+int& Rod::get_alloc_pts()
 {
     return attributes.allocated_points;
 }
 
-void Rod::add_to_alloc_pts(int newly_allocated)
+void Rod::add_to_alloc_pts(const int& newly_allocated) // does const ref have any sense on int??
 {
     attributes.allocated_points += newly_allocated;
 }
@@ -303,4 +304,44 @@ void Rod::add_to_alloc_pts(int newly_allocated)
 Segment* Rod::give_head()
 {
     return head;
+}
+
+bool Rod::attributes_correct()
+{
+    return attributes.total_length > 0 &&
+           attributes.sim_points_number > 0 &&
+           attributes.section_area > 0 &&
+            attributes.thermal_conduct_coeff > 0;
+}
+
+bool Rod::has_unalloc_pts()
+{
+    return attributes.sim_points_number > attributes.allocated_points;
+}
+
+std::vector<double> Rod::get_all_seg_lenghts()
+{
+    Segment* temp = head;
+    std::vector<double> lengths;
+
+    while(temp != nullptr){
+        double length = temp->sim_points * attributes.total_length / attributes.sim_points_number;
+        lengths.push_back(length);
+        temp = temp->next;
+    }
+
+    return  lengths;
+}
+
+std::vector<double> Rod::get_all_seg_ht_coeffs()
+{
+    Segment* temp = head;
+    std::vector<double> ht_coeffs;
+
+    while(temp != nullptr){
+        ht_coeffs.push_back(temp->heat_transfer_coeff);
+        temp = temp->next;
+    }
+
+    return  ht_coeffs;
 }
