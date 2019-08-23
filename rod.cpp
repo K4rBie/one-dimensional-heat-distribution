@@ -238,8 +238,9 @@ float *Rod::calculate_temperature_distribution()
     TabB[0] = static_cast<float>(attributes.starting_temperature);
     TabB[sim_points - 1] = static_cast<float>(attributes.aTk);
 
+
     TabA[0][0] = 1;
-    TabA[0][1]= 0 ;
+    TabA[0][1] = 0 ;
 
     TabA[sim_points - 1][sim_points - 1] = 1;
     TabA[sim_points - 1][sim_points - 2] = 0;

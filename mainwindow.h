@@ -21,16 +21,17 @@ public:
     Rod rod;
 
 private slots:
-    void on_wprowadzbut_clicked();
+    void on_enter_but_clicked();
     void on_dodajbut_clicked();
     void on_wprowotbut_clicked();
     void on_czyscbut_clicked();
     void on_doplikubut_clicked();
-    void on_wczytajbut_clicked();
+    void on_load_but_clicked();
 
 private:
     Ui::MainWindow *ui;
     QFileSystemModel *przegl;
+    void inform_whether_correct();
 };
 
 #endif // MAINWINDOW_H

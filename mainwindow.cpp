@@ -18,9 +18,8 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_wprowadzbut_clicked()
+void MainWindow::on_enter_but_clicked()
 {
-    // kopiuje wartości z boxów do zmiennych
     rod.set_all_attributes(RodAttributes{
                                ui->total_length_box->value(),
                                ui->pole->value(),
@@ -30,16 +29,7 @@ void MainWindow::on_wprowadzbut_clicked()
                                ui->Tot->value(),
                                static_cast<unsigned int>(ui->n->value()), 0}); //WARNING: can make problems
 
-    if (rod.attributes_correct()){
-        ui->Podzial->setEnabled(true);
-        ui->wprowotbut->setDisabled(true);
-        ui->doplikubut->setDisabled(true);
-
-        ui->odcinekbar->setMaximum(ui->n->value());
-        ui->sprawdzlab->setText("Dane prawidłowe");
-    } else {
-        ui->sprawdzlab->setText("Dane nieprawidłowe");
-    }
+    inform_whether_correct();
 }
 
 void MainWindow::on_dodajbut_clicked(){
@@ -124,16 +114,16 @@ void MainWindow::on_doplikubut_clicked()
 }
 
 
-void MainWindow::on_wczytajbut_clicked()
+void MainWindow::on_load_but_clicked()
 {
-    QString Qsciezka = QFileDialog::getOpenFileName(this,tr("wybierz plik") ,"", tr("Plik tekstowy (*.txt)"));
-    std::string sciezka = Qsciezka.toUtf8().constData();
-    if (sciezka == "") return;
+    QString Qpath = QFileDialog::getOpenFileName(this,tr("Choose a file") ,"", tr("Text file (*.txt)"));
+    std::string path = Qpath.toUtf8().constData();
+    if (path == "") return;
 
-    ifstream plik;
-    plik.open(sciezka.c_str());
-    if(!plik.is_open()){
-        QMessageBox::warning(this, "Błąd","Nie można otworzyć pliku");
+    ifstream file;
+    file.open(path.c_str());
+    if(!file.is_open()){
+        QMessageBox::warning(this, "Error","Cannot open this file");
         return;
     }
 
@@ -150,28 +140,28 @@ void MainWindow::on_wczytajbut_clicked()
 
     char temp;
 
-    do{plik >> temp;} while (temp != '=');
-    plik >> attr.total_length;
+    do{file >> temp;} while (temp != '=');
+    file >> attr.total_length;
 
-    do{plik >> temp;} while (temp != '=');
-    plik >> attr.sim_points_number;
+    do{file >> temp;} while (temp != '=');
+    file >> attr.sim_points_number;
 
-    do{plik >> temp;} while (temp != '=');
-    plik >> attr.section_area;
+    do{file >> temp;} while (temp != '=');
+    file >> attr.section_area;
 
-    do{plik >> temp;} while (temp != '=');
-    plik >> attr.thermal_conduct_coeff;
+    do{file >> temp;} while (temp != '=');
+    file >> attr.thermal_conduct_coeff;
 
-    do{plik >> temp;} while (temp != '=');
-    plik >> attr.env_temperature;
+    do{file >> temp;} while (temp != '=');
+    file >> attr.env_temperature;
 
-    do{plik >> temp;} while (temp != '=');
-    plik >> attr.starting_temperature;
+    do{file >> temp;} while (temp != '=');
+    file >> attr.starting_temperature;
 
-    do{plik >> temp;} while (temp != '=');
-    plik >> attr.aTk;
+    do{file >> temp;} while (temp != '=');
+    file >> attr.aTk;
 
-    do{plik >> temp;} while (temp != '=');
+    do{file >> temp;} while (temp != '=');
 
 
     rod.set_all_attributes(attr);
@@ -180,10 +170,10 @@ void MainWindow::on_wczytajbut_clicked()
     ui->odcinekbar->setValue(0);
     ui->wprowotbut->setDisabled(true);
 
-    while(rod.has_unalloc_pts() && !plik.eof()){
+    while(rod.has_unalloc_pts() && !file.eof()){
 
-        plik>>section_length;
-        plik>>alfa;
+        file>>section_length;
+        file>>alfa;
 
         section_sim_points = int(round(section_length / rod.get_attributes().total_length * rod.get_attributes().sim_points_number));
 
@@ -195,7 +185,7 @@ void MainWindow::on_wczytajbut_clicked()
         rod.new_segment(section_sim_points, alfa);
     }
 
-    plik.close();
+    file.close();
 
     ui->odcinekbar->setValue(rod.get_attributes().allocated_points);
 
@@ -207,21 +197,25 @@ void MainWindow::on_wczytajbut_clicked()
     ui->Tk->setValue(               rod.get_attributes().aTk);
     ui->Tot->setValue(              rod.get_attributes().env_temperature);
 
-    if(rod.attributes_correct()){
-
-        ui->Podzial->setEnabled(true);
-        ui->wprowotbut->setDisabled(true);
-        ui->doplikubut->setDisabled(true);
-
-        ui->odcinekbar->setMaximum(rod.get_attributes().sim_points_number);
-        ui->sprawdzlab->setText("Dane prawidłowe");
-    }else{
-        ui->sprawdzlab->setText("Dane nieprawidłowe");
-    }
+    inform_whether_correct();
 
     if(!rod.has_unalloc_pts()){
         ui->wprowotbut->setEnabled(true);
         ui->doplikubut->setEnabled(true);
+    }
+}
+
+void MainWindow::inform_whether_correct()
+{
+    if (rod.attributes_correct()){
+        ui->Podzial->setEnabled(true);
+        ui->wprowotbut->setDisabled(true);
+        ui->doplikubut->setDisabled(true);
+
+        ui->odcinekbar->setMaximum(ui->n->value());
+        ui->sprawdzlab->setText("Data correct");
+    } else {
+        ui->sprawdzlab->setText("Data not correct!");
     }
 }
 
