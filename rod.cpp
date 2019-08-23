@@ -149,7 +149,7 @@ bool Rod::attributes_correct()
     return attributes.total_length > 0 &&
            attributes.sim_points_number > 0 &&
            attributes.section_area > 0 &&
-            attributes.thermal_conduct_coeff > 0;
+           attributes.thermal_conduct_coeff > 0;
 }
 
 bool Rod::has_unalloc_pts()
