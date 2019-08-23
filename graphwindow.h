@@ -18,12 +18,12 @@ public:
     ~GraphWindow();
 
     void paintEvent(QPaintEvent*);
-    void przekaz(double *Tablica, int n, double l);
+    void przekaz(float *Tablica, unsigned int n, double l);
     int bn;
     int bl;
-    double *Btab;
+    //double *Btab;
     QPointF *Wykres;
-    double minw, maxw;
+    float minw, maxw;
 
 
 private slots:

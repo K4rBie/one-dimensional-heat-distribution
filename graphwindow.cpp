@@ -16,16 +16,16 @@ GraphWindow::~GraphWindow()
     delete ui;
 }
 
-void GraphWindow::przekaz(double *Tablica, int n, double l){
+void GraphWindow::przekaz(float *Tablica, unsigned int n, double l){
     Wykres = new QPointF [n];
     bn=n;
     bl=l;
-    double a, b;
-    double min = Tablica[0];
-    double max = Tablica[0];
+    float a, b;
+    float min = Tablica[0];
+    float max = Tablica[0];
 
     a=530;
-    for(int j=0; j<n; j++){
+    for(unsigned int j=0; j<n; j++){
         if(min>Tablica[j]){
             min=Tablica[j];
         }
@@ -36,12 +36,12 @@ void GraphWindow::przekaz(double *Tablica, int n, double l){
     b=300/(max-min);
 
     maxw = max;
-    //minw = min;
     minw = (max-min)*b;
 
 
-    for(int i=0; i<n; i++){
-        Wykres[i] += QPointF(50+a*i/(n-1), 30+b*(max-Tablica[i]));
+    for(unsigned int i=0; i<n; i++){
+        Wykres[i] += QPointF(static_cast<double>(50+a*i/(n-1)),
+                             static_cast<double>(30+b*(max-Tablica[i])));
     }
 
 
@@ -109,7 +109,6 @@ void GraphWindow::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
 
-
     painter.setBrush(Qt::white);
     painter.setPen(QPen(Qt::gray, 0));
     painter.drawRect(50,20,530,340);
@@ -118,8 +117,6 @@ void GraphWindow::paintEvent(QPaintEvent*)
 
     painter.setPen(QColor(210, 210, 210));
     painter.drawLine(315, 20, 315, 360);
-    //painter.drawLine(320, 20, 320, 360);
-    //painter.drawLine(70, 20, 70, 360);
 
     /*LINIE POZIOME*/
 

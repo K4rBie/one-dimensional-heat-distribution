@@ -28,17 +28,16 @@ void MainWindow::on_wprowadzbut_clicked()
                                ui->Tp->value(),
                                ui->Tk->value(),
                                ui->Tot->value(),
-                               ui->n->value(), 0});
+                               static_cast<unsigned int>(ui->n->value()), 0}); //WARNING: can make problems
 
-    if(rod.attributes_correct()){
-
+    if (rod.attributes_correct()){
         ui->Podzial->setEnabled(true);
         ui->wprowotbut->setDisabled(true);
         ui->doplikubut->setDisabled(true);
 
         ui->odcinekbar->setMaximum(ui->n->value());
         ui->sprawdzlab->setText("Dane prawidłowe");
-    }else{
+    } else {
         ui->sprawdzlab->setText("Dane nieprawidłowe");
     }
 }
@@ -75,16 +74,8 @@ void MainWindow::on_dodajbut_clicked(){
 
 void MainWindow::on_wprowotbut_clicked()
 {
-    double* Tablica = new double [rod.get_attributes().sim_points_number];
-    Tablica = obliczenia(
-                rod.get_attributes().total_length,
-                rod.get_attributes().sim_points_number,
-                rod.get_attributes().section_area,
-                rod.get_attributes().thermal_conduct_coeff,
-                rod.get_attributes().starting_temperature,
-                rod.get_attributes().aTk,
-                rod.get_attributes().env_temperature,
-                rod.give_head());
+    auto* Tablica = new float [rod.get_attributes().sim_points_number];
+    Tablica = rod.calculate_temperature_distribution();
 
     GraphWindow okno;
     okno.setModal(true);
@@ -104,20 +95,20 @@ void MainWindow::on_czyscbut_clicked()
 
 void MainWindow::on_doplikubut_clicked()
 {
-    QString q_name = QFileDialog::getSaveFileName(this,tr("wybierz plik") ,"", tr("Plik tekstowy (*.txt)"));
+    QString q_name = QFileDialog::getSaveFileName(this,tr("Save File"), "", tr("Text files (*.txt)"));
     ofstream o_file;
     o_file.open(std::string{q_name.toUtf8().constData()}.c_str());
 
-    if(o_file.is_open() == true){
+    if(o_file.is_open() == true){ // probably not needed, but it's ok
 
-        o_file<<"Długość pręta = " << rod.get_attributes().total_length <<endl;
-        o_file<<"Ilość punktów obliczeń = " << rod.get_attributes().sim_points_number<<endl;
-        o_file<<"Pole przekroju pręta = " << rod.get_attributes().section_area<<endl;
-        o_file<<"Współczynnik przewodzenia ciepła = " << rod.get_attributes().thermal_conduct_coeff<<endl;
-        o_file<<"Temperatura otoczenia = " << rod.get_attributes().env_temperature<<endl;
-        o_file<<"Temperatura pierwszego końca = " << rod.get_attributes().starting_temperature<<endl;
-        o_file<<"Temperatura drugiego końca = " << rod.get_attributes().aTk<<endl;
-        o_file<<"podział (długość fragmentu drutu)_(współczynnik przejmowania ciepła) = "<<endl;
+        o_file<<"Rod length = " << rod.get_attributes().total_length <<endl;
+        o_file<<"Simulation points = " << rod.get_attributes().sim_points_number<<endl;
+        o_file<<"Section area = " << rod.get_attributes().section_area<<endl;
+        o_file<<"Thermal conductivity coeffitient = " << rod.get_attributes().thermal_conduct_coeff<<endl;
+        o_file<<"Environment temperature = " << rod.get_attributes().env_temperature<<endl;
+        o_file<<"Starting point temperature = " << rod.get_attributes().starting_temperature<<endl;
+        o_file<<"End point temperature = " << rod.get_attributes().aTk<<endl;
+        o_file<<"Segmentation (segment length)_(segment heat transfer coeffitient) = "<<endl;
 
         // those 2 functions can be merged into one with touple or vector of pairs or any other way.
         vector<double> lengths = rod.get_all_seg_lenghts();
